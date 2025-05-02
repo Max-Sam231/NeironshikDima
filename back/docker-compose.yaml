@@ -1,0 +1,38 @@
+services:
+    # main:
+    #     container_name: main
+    #     build:
+    #         context: .
+    #     env_file:
+    #         - .env
+    #     volumes:
+    #         - .:/app
+    #         - /app/node_modules
+    #     ports:
+    #         - 3000:3000
+    #         - 9229:9229
+    #     command: npm run start:prod:migrate
+    #     depends_on:
+    #         - postgres
+    #     restart: always
+    #     networks:
+    #         - studentlabs-backend
+    postgres:
+        container_name: postgres
+        image: postgres:16
+        restart: always
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        ports:
+            - 5432:5432
+        volumes:
+            - postgres:/var/lib/postgresql/data
+        # networks:
+        #     - studentlabs-backend
+volumes:
+    postgres:
+
+# networks:
+#     studentlabs-backend:
+#         driver: bridge
