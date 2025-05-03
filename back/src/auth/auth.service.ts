@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { Prisma } from '@prisma/client'
 import * as bcrypt from 'bcryptjs'
 import { PrismaService } from 'src/prisma.service'
 import { AuthResponseDto } from './dto/auth-response.dto'
@@ -20,10 +19,10 @@ export class AuthService {
 		const user = await this.prisma.user.create({
 			data: {
 				email: dto.email,
+				name: dto.name,
 				passwordHash: hashedPassword,
 				weight: dto.weight,
 				height: dto.height,
-				age: dto.age,
 				allergy: dto.allergy
 			},
 			omit: { passwordHash: true }
@@ -32,6 +31,10 @@ export class AuthService {
 		return {
 			id: user.id,
 			email: user.email,
+			name: user.name,
+			weight: user.weight,
+			height: user.height,
+			allergy: user.allergy,
 			token: this.jwtService.sign({ id: user.id })
 		}
 	}
@@ -58,11 +61,15 @@ export class AuthService {
 		return {
 			id: user.id,
 			email: user.email,
+			name: user.name,
+			weight: user.weight,
+			height: user.height,
+			allergy: user.allergy,
 			token: this.jwtService.sign({ id: user.id })
 		}
 	}
 
-	async findOne(data: Prisma.UserWhereUniqueInput) {
+	async findOne(data) {
 		const user = await this.prisma.user.findUnique({
 			where: data,
 			omit: { passwordHash: true }
@@ -72,8 +79,8 @@ export class AuthService {
 	}
 
 	async update(
-		where: Prisma.UserWhereUniqueInput,
-		data: Prisma.UserUpdateInput
+		where,
+		data
 	) {
 		return await this.prisma.user.update({ where, data })
 	}

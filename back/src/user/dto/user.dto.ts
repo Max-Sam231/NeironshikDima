@@ -34,11 +34,7 @@ export class UserDto {
 	@IsOptional()
 	@IsString()
 	height: string
-
-	@IsOptional()
-	@IsNumber()
-	age: number
-
+	
 	@IsOptional()
 	@IsArray()
 	allergy: string[]

@@ -1,10 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsEmail, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 export class AuthDto {
-	@IsEmail()
+	@IsString()
 	@ApiProperty({ example: 'test@test.test' })
 	email: string
+
+	@IsString()
+	name: string
 
 	@IsString()
 	@ApiProperty({ example: 'secretpassword' })
@@ -19,10 +22,6 @@ export class AuthDto {
 	height: string
 
 	@IsOptional()
-	@IsNumber()
-	age: number
-
-	@IsOptional()
-	@IsArray()
-	allergy: string[]
+	@IsString()
+	allergy: string
 }
