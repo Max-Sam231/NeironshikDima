@@ -5,13 +5,15 @@ type TagInputProps = {
 	labelName?: boolean;
 	onTagsChange: (tags: string[]) => void;
 	submitButton?: boolean;
-}
+	succFunc?: () => void;
+};
 
 const TagInput: React.FC<TagInputProps> = ({
 	placeholder = "Начните вводить...",
 	labelName = true,
 	onTagsChange,
 	submitButton = true,
+	succFunc
 }) => {
 	const [inputValue, setInputValue] = useState("");
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);

@@ -1,6 +1,7 @@
 // components/ProfileModal.tsx
 // import {useUserStore} from "@/stores/userStore";
 import {useAppStore} from "@/store/store";
+// import { useState } from "react";
 // import Image from "next/image";
 
 type ProfileModalProps = {
@@ -8,9 +9,21 @@ type ProfileModalProps = {
 	onClose: (open: boolean) => void;
 };
 
+function parsePythonListString(input: string) {
+	const trimmed = input.replace(/^\[|\]$/g, '').trim();
+  
+	if (!trimmed) return [];
+  
+	return trimmed.split(/\s*,\s*/)
+	  .map(item => item.replace(/^'|'$/g, ''));
+  }
+
 const ProfileModal: React.FC<ProfileModalProps> = ({isOpen, onClose}) => {
 	const {user} = useAppStore();
-
+	console.log(user);
+	
+	const userOleg = parsePythonListString(user.allergy)
+	// const [allergy, setAllergy] = useState();
 	if (!isOpen) return null;
 
 	return (
@@ -39,8 +52,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({isOpen, onClose}) => {
 				<div className="mb-4">
 					<h4 className="text-base font-semibold mb-2">Ваши аллергены</h4>
 					<div className="flex gap-2 flex-wrap">
-						{user.allergy.length > 0 ? (
-							user?.allergy.map((allergy, index) => (
+						{userOleg.length > 0 ? (
+							userOleg.map((allergy, index) => (
 								<span
 									key={index}
 									className="bg-[#00D8BF]/10 text-[#00D8BF] px-3 py-1 rounded-full text-sm">

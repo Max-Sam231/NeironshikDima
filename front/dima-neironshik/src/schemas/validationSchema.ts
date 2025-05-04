@@ -30,3 +30,11 @@ export const FormSchema = z.object({
 });
 
 export type FormValues = z.infer<typeof FormSchema>;
+
+export const FormSchemaLogin = z.object({
+	email: z.string().email("Введите корректный email"),
+
+	password: z.string(),
+});
+
+export type FormValuesLogin = z.infer<typeof FormSchemaLogin>;

@@ -1,5 +1,5 @@
 "use client";
-import {getText} from "@/api/backRequest";
+import {getText, getTextImage} from "@/api/backRequest";
 import ChatInput from "@/components/InputFile";
 import MessageMd from "@/components/MessadgeMd";
 import ProfileModal from "@/components/Modal";
@@ -16,7 +16,7 @@ import {useState} from "react";
 export default function Home() {
 	const [allergens, setAllergens] = useState<string[]>([]);
 	const [ismodeAnal, setMode] = useState(true);
-	const [isChat, setIsChat] = useState(false);
+	const [isChat, setIsChat] = useState(true);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {user, chatHistory, addMessage} = useAppStore();
 	const sumbitData = () => {
@@ -26,11 +26,13 @@ export default function Home() {
 		console.log("Отправка:", {text, file});
 		setIsChat(true);
 		console.log(chatHistory);
-		// const result = await getText(text, user.token);
-		// addMessage(result);
-		setTimeout(() => {
-			addMessage("Ответ");
-		}, 3000);
+		if (ismodeAnal) {
+			const result = await getTextImage(text, file, user.token);
+			addMessage(result);
+		} else {
+			const result = await getText(text, user.token);
+			addMessage(result);
+		}
 	};
 	return (
 		<>
@@ -66,8 +68,16 @@ export default function Home() {
 								if (index % 2 === 0) {
 									return (
 										<div key={index} className="flex  justify-end">
-											<span className="max-w-2/5 w-fit border-1 border-[#B7B7B7] rounded-4xl p-2">
+											<span className="max-w-2/5 w-fit border-1 border-[#B7B7B7] rounded-4xl p-2 mr-10 relative">
 												{item}
+												<span className="size-7 absolute right-[-32px] top-1.5">
+													<Image
+														src={"/assets/user.png"}
+														width={30}
+														height={30}
+														alt="toggle password visibility"
+													/>
+												</span>
 											</span>
 										</div>
 									);
@@ -75,7 +85,15 @@ export default function Home() {
 									return (
 										<div key={index} className="">
 											<div className="h-4"></div>
-											<div className="max-w-4/5 w-fit border-1 border-[#B7B7B7] rounded-4xl p-4">
+											<div className="max-w-4/5 w-fit border-1 border-[#B7B7B7] rounded-4xl p-4 relative ml-10">
+												<span className="border-1 border-[#B7B7B7] size-7 absolute left-[-32px] top-3 rounded-full">
+													<Image
+														src={"/assets/Logo-circle.png"}
+														width={40}
+														height={40}
+														alt="toggle password visibility"
+													/>
+												</span>
 												<MessageMd content={item} />
 											</div>
 											<div className="h-4"></div>
@@ -96,7 +114,11 @@ export default function Home() {
 							)}
 							{!ismodeAnal && (
 								<div className="min-w-[100%] ">
-									<TagInput labelName={false} onTagsChange={setAllergens} />
+									<TagInput
+										labelName={false}
+										succFunc={() => handleSendMessage}
+										onTagsChange={setAllergens}
+									/>
 								</div>
 							)}
 						</div>

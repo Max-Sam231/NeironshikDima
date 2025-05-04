@@ -1,23 +1,32 @@
 // import React, {useState} from "react";
 import Input from "./Input";
-import {FormSchema, FormValues} from "@/schemas/validationSchema";
+import {
+	FormSchemaLogin,
+	FormValuesLogin,
+} from "@/schemas/validationSchema";
 import {FormProvider, SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import Button from "./Button";
 // import TagInput from "./TagInput";
 import Link from "next/link";
+import {login} from "@/api/backRequest";
+import {useRouter} from "next/navigation";
+import { useAppStore } from "@/store/store";
 
 const FormLogin: React.FC = () => {
-	// const [allergens, setAllergens] = useState<string[]>([]);
-	const methods = useForm<FormValues>({
-		resolver: zodResolver(FormSchema),
+	const {setUser} = useAppStore();
+	const router = useRouter();
+	const methods = useForm<FormValuesLogin>({
+		resolver: zodResolver(FormSchemaLogin),
 		mode: "onChange",
 	});
-
 	const {handleSubmit} = methods;
-
-	const onSubmit: SubmitHandler<FormValues> = (data) => {
+	const onSubmit: SubmitHandler<FormValuesLogin> = async (data) => {
 		console.log("Данные формы:", data);
+		const result = await login(data);
+		console.log(result);
+		setUser(result);
+		router.replace("/");
 	};
 
 	return (
@@ -25,7 +34,7 @@ const FormLogin: React.FC = () => {
 			<FormProvider {...methods}>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="bg-[#ECECEC] rounded-lg py-6 w-[50vw] px-8">
+					className="border-1 border-[#B7B7B7] rounded-4xl py-6 w-[50vw] px-8">
 					<Input
 						name="email"
 						labelName="Введите ваше имя и фамилию"
@@ -33,9 +42,9 @@ const FormLogin: React.FC = () => {
 						placeholder={"Max"}
 					/>
 					<Input
-						name="email"
+						name="password"
 						labelName="Введите e-mail"
-						error={methods.formState.errors.email?.message}
+						error={methods.formState.errors.password?.message}
 						placeholder={"email@mail.com"}
 					/>
 					<Button type={"submit"} text={"Войти"} onClick={() => console.log()} />
