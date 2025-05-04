@@ -1,19 +1,27 @@
-FROM node:22.14-alpine
+# Используем лёгкий образ Node.js
+FROM node:22-alpine
 
+# Рабочая директория
 WORKDIR /app
 
-COPY package*.json ./
+# Копируем зависимости
+COPY package.json ./
+COPY prisma ./prisma/
 
+# Устанавливаем зависимости (включая Prisma)
 RUN npm install
 
+# Копируем остальные файлы
 COPY . .
 
-COPY .env ./
-
+# Генерируем Prisma Client
 RUN npx prisma generate
 
-RUN npm run build
+# Создаём файл SQLite (если его нет) и даём права на запись
+# RUN touch /app/prisma/dev.db && chmod +w /app/prisma/dev.db
 
-EXPOSE 3000
+# Применяем миграции (если они есть)
+RUN npx prisma migrate dev --name init
 
-CMD ["npm", "run", "start:prod:migrate"]
+# Запускаем приложение
+CMD ["npm", "run", "start:dev"]
