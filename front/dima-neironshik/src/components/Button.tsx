@@ -4,7 +4,7 @@ import React from "react";
 type Props = {
 	type: "submit" | "reset" | "button";
 	text: string;
-	onClick: () => void;
+	onClick?: () => void;
 };
 
 const Button: React.FC<Props> = ({type, text, onClick}) => {

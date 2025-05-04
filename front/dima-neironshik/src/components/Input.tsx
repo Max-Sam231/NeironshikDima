@@ -1,38 +1,67 @@
-import {FormValues} from "@/schemas/validationSchema";
 import React, {useState} from "react";
 import {useFormContext} from "react-hook-form";
+import Image from "next/image";
+import { FormValues } from "@/schemas/validationSchema";
 
-type Props = {
+type InputProps = {
 	name: keyof FormValues;
 	labelName: string;
 	error?: string;
 	placeholder: string;
+	type?: "text" | "password" | "number";
+	min?: number;
+	max?: number;
+	step?: number;
+	inputClassName?: string;
 };
 
-const Input: React.FC<Props> = ({name, labelName, error, placeholder}) => {
+const Input: React.FC<InputProps> = ({
+	name,
+	labelName,
+	error,
+	placeholder,
+	type = "text",
+	min,
+	max,
+	step,
+	inputClassName = "",
+}) => {
 	const [isVisible, setIsVisible] = useState(false);
 	const {register} = useFormContext<FormValues>();
+
 	return (
-		<>
-			<label htmlFor={name} className="font-semibold text-sm mb-2.5">
+		<div className="mb-4">
+			<label htmlFor={name} className="font-semibold text-sm block">
 				{labelName}
 			</label>
 			<div className="relative">
 				<input
 					id={name}
-					type={name === "email"&& isVisible ? "password" : "text"}
+					type={name === "password" && !isVisible ? "password" : type}
 					{...register(name)}
 					placeholder={placeholder}
-					className="h-12 w-full bg-[#F5F5F5] pl-2.5 rounded-lg my-2.5"
+					min={min}
+					max={max}
+					step={step}
+					className={`h-12 w-full border border-[#B7B7B7] pl-6 rounded-4xl my-2.5 ${inputClassName}`}
 				/>
-				{name === "email" && (
+				{name === "password" && (
 					<span
-						className="size-5 absolute top-6 right-4 bg-amber-400"
-						onClick={() => setIsVisible(!isVisible)}></span>
+						className="size-5 absolute top-6 right-4 flex items-center cursor-pointer"
+						onClick={() => setIsVisible((prev) => !prev)}>
+						<Image
+							src={
+								isVisible ? "/assets/eye_closed.png" : "/assets/eye_opened.png"
+							}
+							width={20}
+							height={20}
+							alt="toggle password visibility"
+						/>
+					</span>
 				)}
-				{error && <p>{error}</p>}
+				{error && <p className="text-red-500 text-xs mt-1">{error}</p>}
 			</div>
-		</>
+		</div>
 	);
 };
 
